@@ -2,40 +2,37 @@ import PouchDB from 'pouchdb';
 import {useEffect, useState} from 'react';
 import {v4 as uuid} from 'uuid';
 
-const DB_SERVER = process.env.REACT_APP_COUCH_URL;
-const DATABASE_NAME = 'reacttodotemplate';
-
-export default function TodoContainer({children}) {
+export default function useImmerPouch({dbServer, databaseName}) {
   const [db, setDb] = useState(null);
   const [docs, setDocs] = useState(null);
 
-  function syncToRemote({localDb}) {
-    const remoteIdentifier = `${DB_SERVER}/${DATABASE_NAME}`;
-    const remoteDb = new PouchDB(remoteIdentifier);
-    const syncHandler = localDb
-      .sync(remoteDb, {
-        live: true,
-        retry: true,
-      })
-      .on('change', function (change) {
-        console.log('POUCHDB CHANGE', change);
-        // yo, something changed!
-      })
-      .on('paused', function (info) {
-        console.log('POUCHDB PAUSED', info);
-      })
-      .on('active', function (info) {
-        console.log('POUCHDB ACTIVE', info);
-      })
-      .on('error', function (err) {
-        console.log('POUCHDB ERROR', err);
-      });
-    return syncHandler;
-  }
-
   useEffect(() => {
+    function syncToRemote({localDb}) {
+      const remoteIdentifier = `${dbServer}/${databaseName}`;
+      const remoteDb = new PouchDB(remoteIdentifier);
+      const syncHandler = localDb
+        .sync(remoteDb, {
+          live: true,
+          retry: true,
+        })
+        .on('change', function (change) {
+          console.log('POUCHDB CHANGE', change);
+          // yo, something changed!
+        })
+        .on('paused', function (info) {
+          console.log('POUCHDB PAUSED', info);
+        })
+        .on('active', function (info) {
+          console.log('POUCHDB ACTIVE', info);
+        })
+        .on('error', function (err) {
+          console.log('POUCHDB ERROR', err);
+        });
+      return syncHandler;
+    }
+
     if (!db) {
-      const localDb = new PouchDB(DATABASE_NAME);
+      const localDb = new PouchDB(databaseName);
       const syncHandler = syncToRemote({localDb});
       setDb(localDb);
 
@@ -54,7 +51,7 @@ export default function TodoContainer({children}) {
         syncHandler.cancel();
       };
     }
-  }, [db]);
+  }, [db, dbServer, databaseName]);
 
   function createDoc(attributes) {
     const id = uuid();
@@ -85,21 +82,5 @@ export default function TodoContainer({children}) {
       .catch(console.error);
   }
 
-  function createTodo(name) {
-    return createDoc({name});
-  }
-
-  function completeTodo(todo) {
-    return updateDoc(todo, {complete: true});
-  }
-
-  function deleteTodo(todo) {
-    return deleteDoc(todo);
-  }
-
-  if (docs) {
-    return children({todos: docs, createTodo, completeTodo, deleteTodo});
-  } else {
-    return null;
-  }
+  return {docs, createDoc, updateDoc, deleteDoc};
 }
