@@ -11,16 +11,15 @@ export default function TodoContainer({children}) {
     setTodos([...todos, newTodo]);
   }
 
-  function completeTodo(id) {
-    const todo = todos.find(todo => todo.id === id);
-    const updatedTodo = {
-      ...todo,
+  function completeTodo(todoToComplete) {
+    const completedTodo = {
+      ...todoToComplete,
       complete: true,
     };
     setTodos(
       todos.map(todo => {
-        if (todo.id === id) {
-          return updatedTodo;
+        if (todo.id === completedTodo.id) {
+          return completedTodo;
         } else {
           return todo;
         }
@@ -28,8 +27,8 @@ export default function TodoContainer({children}) {
     );
   }
 
-  function deleteTodo(id) {
-    setTodos(todos.filter(todo => todo.id !== id));
+  function deleteTodo(todoToDelete) {
+    setTodos(todos.filter(todo => todo.id !== todoToDelete.id));
   }
 
   return children({todos, createTodo, completeTodo, deleteTodo});

@@ -37,8 +37,8 @@ export default function TodoList({
         {incompleteTodos.map(todo => (
           <li key={todo.id}>
             {todo.name}
-            <button onClick={() => completeTodo(todo.id)}>Complete</button>
-            <button onClick={() => deleteTodo(todo.id)}>Delete</button>
+            <button onClick={() => completeTodo(todo)}>Complete</button>
+            <button onClick={() => deleteTodo(todo)}>Delete</button>
           </li>
         ))}
       </ul>
@@ -47,7 +47,7 @@ export default function TodoList({
         {completeTodos.map(todo => (
           <li key={todo.id}>
             {todo.name}
-            <button onClick={() => deleteTodo(todo.id)}>Delete</button>
+            <button onClick={() => deleteTodo(todo)}>Delete</button>
           </li>
         ))}
       </ul>

@@ -12,15 +12,15 @@ export default function TodoContainer({children}) {
     setTodos([...todos, newTodo]);
   }
 
-  function completeTodo(id) {
+  function completeTodo(todoToComplete) {
     const updatedTodos = produce(todos, draft => {
-      draft.find(todo => todo.id === id).complete = true;
+      draft.find(todo => todo.id === todoToComplete.id).complete = true;
     });
     setTodos(updatedTodos);
   }
 
-  function deleteTodo(id) {
-    setTodos(todos.filter(todo => todo.id !== id));
+  function deleteTodo(todoToDelete) {
+    setTodos(todos.filter(todo => todo.id !== todoToDelete.id));
   }
 
   return children({todos, createTodo, completeTodo, deleteTodo});
