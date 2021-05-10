@@ -54,23 +54,20 @@ export default function useImmerPouch({dbServer, databaseName}) {
   }, [db, dbServer, databaseName]);
 
   function createDoc(attributes) {
-    const id = uuid();
+    const _id = uuid();
     const newDocWithId = {
-      _id: id,
-      id,
+      _id,
       ...attributes,
     };
     return db.put(newDocWithId).catch(console.error);
   }
 
-  function updateDoc(doc, attributes) {
+  function updateDoc(doc, docReducer) {
     return db
       .get(doc._id)
       .then(doc => {
-        return db.put({
-          ...doc,
-          ...attributes,
-        });
+        const updatedDoc = docReducer(doc);
+        return db.put(updatedDoc);
       })
       .catch(console.error);
   }

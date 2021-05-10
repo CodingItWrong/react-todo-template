@@ -1,7 +1,6 @@
-import produce from 'immer';
 import usePouch from '../usePouch';
 
-export default function useImmerPouch({dbServer, databaseName}) {
+export default function useRawPouch({dbServer, databaseName}) {
   const {
     docs,
     createDoc,
@@ -9,8 +8,11 @@ export default function useImmerPouch({dbServer, databaseName}) {
     deleteDoc,
   } = usePouch({dbServer, databaseName});
 
-  const updateDoc = (doc, callback) =>
-    rawUpdateDoc(doc, doc => produce(doc, callback));
+  const updateDoc = (doc, attributes) =>
+    rawUpdateDoc(doc, doc => ({
+      ...doc,
+      ...attributes,
+    }));
 
   return {docs, createDoc, updateDoc, deleteDoc};
 }
