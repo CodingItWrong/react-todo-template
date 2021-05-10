@@ -1,6 +1,6 @@
-# My React App
+# React Todo Template
 
-Describe your app here.
+A project for trying out different approaches to state management.
 
 ## Usage
 
